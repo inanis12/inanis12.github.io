@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        #video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            min-width: 100%; 
+            min-height: 100%;
+        }
+        #computer-image {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        #terminal-text {
+            font-family: 'Courier New', Courier, monospace;
+            color: green;
+            font-size: 24px;
+            white-space: pre;
+            position: absolute;
+            top: 40%;
+            left: 50%; /* Movido um pouco para a direita */
+            transform: translateX(-50%) rotate(-1deg); /* Inclinado para a esquerda */
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+        }
+        #password-field {
+            display: none;
+            position: absolute;
+            top: 60%;
+            left: 50%; /* Movido um pouco para a direita */
+            transform: translateX(-50%) rotate(-1deg); /* Inclinado para a esquerda */
+            font-size: 24px;
+            font-family: 'Courier New', Courier, monospace;
+            color: green;
+            background-color: black;
+            border: none;
+            outline: none;
+            padding: 10px;
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <video id="video-background" autoplay muted loop>
+        <source src="imagens/Fundo da página do Site.mp4" type="video/mp4">
+    </video>
+    <div id="computer-image">
+        <img src="imagens/185 Sem Título_20241205172942.png" alt="Computador">
+        <div id="terminal-text"></div>
+        <input type="password" id="password-field" placeholder="Digite a senha">
+    </div>
+    <audio id="type-sound" src="imagens/short-beep-tone-47916.mp3"></audio>
+    <audio id="background-sound" src="imagens/radio-interference-from-dvd-burner-35159.mp3" loop autoplay muted></audio>
+    <audio id="keypress-sound" src="imagens/ROBTVox_Notification lasomarie 3 (ID 2061)_BSB.wav"></audio>
+    <script>
+        const message = "As respostas estão nos detalhes.\nO ciclo se completa com o que\nvocê vê, mas não compreende.";
+        const correctPassword = "7sleutel";
+        let index = 0;
+        const typeSound = document.getElementById('type-sound');
+        const backgroundSound = document.getElementById('background-sound');
+        const keypressSound = document.getElementById('keypress-sound');
+        keypressSound.volume = 0.2; // Ajusta o volume conforme necessário
+
+        function typeWriter() {
+            if (index < message.length) {
+                document.getElementById('terminal-text').innerHTML += message.charAt(index);
+                typeSound.currentTime = 0; // Reinicia o som
+                typeSound.play();
+                index++;
+                setTimeout(typeWriter, 150);
+            } else {
+                document.getElementById('password-field').style.display = 'block';
+            }
+        }
+
+        document.getElementById('password-field').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                const inputPassword = event.target.value;
+                if (inputPassword === correctPassword) {
+                    alert('Cacos do Fim');
+                    // Adicione aqui a ação que deseja realizar quando a senha estiver correta
+                } else {
+                    alert('...');
+                }
+            }
+        });
+
+        // Detecta a interação do usuário para ativar o som
+        window.addEventListener('click', () => {
+            if (backgroundSound.muted) {
+                backgroundSound.muted = false; // Desmuta o áudio
+                backgroundSound.play().catch(error => {
+                    console.error('Erro ao tentar reproduzir o áudio de fundo:', error);
+                });
+            }
+        });
+
+        // Inicia o som com volume ajustado
+        window.addEventListener('load', () => {
+            backgroundSound.volume = 0.1; // Ajusta o volume conforme necessário
+        });
+
+        // Toca o som sempre que uma tecla é pressionada
+        document.addEventListener('keypress', () => {
+            keypressSound.currentTime = 0; // Reinicia o som
+            keypressSound.play();
+        });
+
+        setTimeout(() => {
+            const computerImage = document.getElementById('computer-image');
+            computerImage.style.display = 'block';
+            setTimeout(() => {
+                const terminalText = document.getElementById('terminal-text');
+                terminalText.style.opacity = '1';
+                typeWriter();
+            }, 10000); // 10 segundos após a imagem do computador aparecer
+        }, 30000); // 30 segundos
+    </script>
+</body>
+</html>
